@@ -9,7 +9,6 @@
 
     <title>Recuperação | Mural</title>
 
-
     <link rel="stylesheet" href="./css/estilo.css" />
 
     <script src="./js/alerta.js"></script>
@@ -23,7 +22,6 @@
 <body onload="listarParaDropbown()">
 
     <div class="janela">
-
 
         <div class="header-left">
             <h1>Livraria SPTech</h1>
@@ -50,13 +48,11 @@
                     </a>
                 </div>
 
-
                 <div class="btn-nav-white">
                     <a href="./cadastrar-genero.html">
                         <h3>Cadastrar gênero</h3>
                     </a>
                 </div>
-
 
                 <div class="btn-nav-white">
                     <a href="./painel.html">
@@ -64,10 +60,7 @@
                     </a>
                 </div>
 
-
             </div>
-
-
 
             <div class="btn-logout">
                 <h3>Sair</h3>
@@ -76,7 +69,6 @@
         </div>
 
         <div class="content-right">
-
 
             <div class="conteudo">
                 <div class="container">
@@ -92,35 +84,35 @@
                             <label for="genero">Selecione um gênero:
                                 <br>
                                 <select name="genero" id="fkGenero_lista">
-                                    <option hidden selected> - Escolha uma opção - </option>
+                                    <option hidden selected value=""> - Escolha uma opção - </option>
                                 </select>
                             </label>
 
                             <label for="autor">Selecione um autor:
                                 <br>
                                 <select name="autor" id="fkAutor_lista">
-                                    <option hidden selected> - Escolha uma opção - </option>
+                                    <option hidden selected value=""> - Escolha uma opção - </option>
                                 </select>
                             </label>
 
                             <label>
                                 Preço de Compra (R$):
                                 <br>
-                                <input name="precoCompra" id="precoCompra" maxlength="20" type="Text"></input>
+                                <input name="precoCompra" id="precoCompra" maxlength="20" type="Text"
+                                    oninput="calcularPrecoVenda()"></input>
                             </label>
 
                             <label>
                                 Preço de Venda (R$):
                                 <br>
-                                <input name="precoVenda" id="precoVenda" maxlength="20" type="Text"></input>
+                                <input name="precoVenda" id="precoVenda" maxlength="20" type="Text" readonly></input>
                             </label>
 
                             <label>
                                 Quantidade em estoque (Und.):
                                 <br>
-                                <input nome="Estoque" id="Estoque" maxlength="20" type="Text"></input>
+                                <input name="Estoque" id="Estoque" maxlength="20" type="Text"></input>
                             </label>
-
 
                             <button>Cadastrar</button>
                         </form>
@@ -131,66 +123,93 @@
         </div>
     </div>
 
-
-
-
 </body>
 
 </html>
 
 <script>
 
+    function validarCampo(valor, nomeCampo, eNumero = false) {
+        var vetor_caracter = ["@", "#", "$", "%", "&", "^", "*", "(", ")", ";"];
 
-
-    function validar(corpo){
-
-        var vetor_caracter =["@","#","$","%","&","^","*","()",";"];
-
-        if(corpo == ""){
-            alert("Todos os campos devem estar preenchidos");
+        if (valor === "" || valor === null || valor === undefined) {
+            alert(`O campo "${nomeCampo}" deve estar preenchido.`);
             return false;
         }
-        else if(corpo.length < 2){
-            alert("Digite no minimo a Sigla para cada campo.");
+
+        if (valor.toString().length < 2) {
+            alert(`O campo "${nomeCampo}" deve ter no mínimo 2 caracteres/dígitos.`);
             return false;
         }
-        else if(isNaN(corpo)){
-            alert("Não pode conter Numeros nos campos!!");
-            return true;
-        }
-        else if(corpo == vetor_caracter[i]){
-            alert("Não pode conter símbolos @#$ no campo!!");
+
+        if (!eNumero && !isNaN(valor)) {
+            alert(`O campo "${nomeCampo}" não pode conter apenas números!`);
             return false;
         }
+
+        for (let i = 0; i < vetor_caracter.length; i++) {
+            if (valor.toString().includes(vetor_caracter[i])) {
+                alert(`O campo "${nomeCampo}" não pode conter símbolos como @, #, $, etc.`);
+                return false;
+            }
+        }
+
         return true;
-
     }
+    
+    function validarFormulario(corpo) {
 
+        if (!validarCampo(corpo.titulo, "Título"))
+            return false;
 
-    function compra(){
-
-        if(precoCompra >= 100 && genero == Horror || Romance){
-
-            let resultado = 0;
-            resultado = (precoCompra * 22,5)/100;
-            precoVenda = resultado;
+        if (corpo.fkGenero === "" || corpo.fkGenero === "0" || corpo.fkGenero === null) {
+            alert('O campo "Gênero" deve estar preenchido.');
+            return false;
         }
 
-        else if(precoCompra <= 50 && genero == Poesia || Horror){
-
-            let resultado = 0;
-            resultado = (precoCompra * 25)/100;
-            precoVenda = resultado;
-
-
-        }else if(precoCompra > 50 || precoCompra <= 100 && genero == Fantasia){
-
-            let resultado = 0;
-            reaultado = (precoCompra * 27,5)/100;
-            precoVenda = resultado;
+        if (corpo.fkAutor === "" || corpo.fkAutor === "0" || corpo.fkAutor === null) {
+            alert('O campo "Autor" deve estar preenchido.');
+            return false;
         }
 
+        if (!validarCampo(corpo.precoCompra, "Preço de Compra", true))
+            return false;
+
+        if (!validarCampo(corpo.Estoque, "Estoque", true)) 
+        return false;
+
+        return true;
     }
+
+    function calcularPrecoVenda() {
+        var precoCompra = Number(document.getElementById("precoCompra").value);
+        var selectGenero = document.getElementById("fkGenero_lista");
+        var genero = selectGenero.options[selectGenero.selectedIndex] ? selectGenero.options[selectGenero.selectedIndex].text : "";
+
+        var precoVendaInput = document.getElementById("precoVenda");
+
+        if (isNaN(precoCompra) || precoCompra <= 0) {
+            precoVendaInput.value = "";
+            return;
+        }
+
+        var margem = 0;
+
+        if (precoCompra >= 100 && (genero == "Horror" || genero == "Romance")) {
+            margem = 22.5;
+        } else if (precoCompra <= 50 && (genero == "Poesia" || genero == "Horror")) {
+            margem = 25;
+        } else if ((precoCompra > 50 && precoCompra <= 100) && genero == "Fantasia") {
+            margem = 27.5;
+        } else {
+            margem = 20;
+        }
+
+        var resultado = precoCompra + (precoCompra * margem) / 100;
+        precoVendaInput.value = resultado.toFixed(2);
+    }
+
+    document.getElementById("fkGenero_lista").addEventListener("change", calcularPrecoVenda);
 
     function limparFormulario() {
         document.getElementById("form_postagem").reset();
@@ -202,14 +221,13 @@
             fkGenero: form_postagem.fkGenero_lista.value,
             fkAutor: form_postagem.fkAutor_lista.value,
             precoCompra: form_postagem.precoCompra.value,
-            precoVenda: form_postagem.precoVenda.value
-            // Estoque: from_postagem.Estoque.value
+            precoVenda: form_postagem.precoVenda.value,
+            Estoque: form_postagem.Estoque.value
         }
 
-        if(!validar(corpo)){
-            return;
+        if (!validarFormulario(corpo)) {
+            return false; 
         }
-
 
         fetch(`/livros/cadastrar`, {
             method: "post",
@@ -218,14 +236,12 @@
             },
             body: JSON.stringify(corpo)
         }).then(function (resposta) {
-
             console.log("resposta: ", resposta);
 
             if (resposta.ok) {
                 window.alert("Post realizado com sucesso. Você será redirecionado ao Acervo.");
                 window.location = "/";
                 limparFormulario();
-
             } else if (resposta.status == 404) {
                 window.alert("Deu 404!");
             } else {
@@ -233,13 +249,10 @@
             }
         }).catch(function (resposta) {
             console.log(`#ERRO: ${resposta}`);
-
         });
 
         return false;
-
     }
-
 
     function listarParaDropbown() {
         listarAutores()
@@ -256,7 +269,6 @@
                     fkAutor_item_lista.value = "0"
                     fkAutor_item_lista.disabled = true
 
-
                     fkAutor_lista.appendChild(fkAutor_item_lista);
                     throw "Nenhum resultado encontrado";
                 }
@@ -266,21 +278,17 @@
 
                     for (let i = 0; i < resposta.length; i++) {
                         var item = resposta[i];
-
                         var fkAutor_item_lista = document.createElement("option");
                         fkAutor_item_lista.innerHTML = item.nome
                         fkAutor_item_lista.value = item.id
                         fkAutor_lista.appendChild(fkAutor_item_lista);
                     }
-
-
                 });
             } else {
                 throw ('Houve um erro na API!');
             }
         }).catch(function (resposta) {
             console.error(resposta);
-
         });
     }
 
@@ -303,23 +311,18 @@
 
                     for (let i = 0; i < resposta.length; i++) {
                         var item = resposta[i];
-
                         var fkGenero_item_lista = document.createElement("option");
                         fkGenero_item_lista.innerHTML = item.nome
                         fkGenero_item_lista.value = item.id
                         fkGenero_lista.appendChild(fkGenero_item_lista);
                     }
-
-
                 });
             } else {
                 throw ('Houve um erro na API!');
             }
         }).catch(function (resposta) {
             console.error(resposta);
-
         });
     }
-    
 
 </script>

@@ -3,7 +3,7 @@
 -- ter este arquivo aqui não significa que a tabela em seu BD estará como abaixo!
 
 CREATE DATABASE livrariaRecuperacao20262;
-
+DROP DATABASE livrariaRecuperacao20262;
 USE livrariaRecuperacao20262;
 
 CREATE TABLE autor (
@@ -23,12 +23,25 @@ CREATE TABLE livro (
     fkGenero INT,
     precoCompra DOUBLE,
     precoVenda DOUBLE,
+    Estoque DOUBLE,
     CONSTRAINT fk_livro_autor FOREIGN KEY (fkAutor) REFERENCES autor(id),
     CONSTRAINT fk_livro_genero FOREIGN KEY (fkGenero) REFERENCES genero(id)
 );																																																																																																																																																																																		
 
 INSERT INTO genero (nome) VALUES
-(Romance),
-(Cristão),
-(Piscicologia),
-(Ciências);
+('Romance'),
+('Cristão'),
+('Piscicologia'),
+('Ciências');
+
+INSERT INTO autor (nome) VALUES
+('Lourence MArtins'),
+('Miguel Junior'),
+('Elizabeth Menezes'),
+('J.K. Hills');
+
+select * from livro;
+select * from autor;
+select * from genero;
+
+-- Atualizar a tabela com UPDATE e NÃO COM DROP!

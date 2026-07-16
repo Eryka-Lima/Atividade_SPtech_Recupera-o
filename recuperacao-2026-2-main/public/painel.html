@@ -79,16 +79,62 @@
         </div>
 
         <div class="content-right">
-            <div class="conteudo">
+            <div class="conteudo" style="background-color: #0c2f46;">
                 <div class="container">
                     <h1>Painel</h1>
                     <div class="div-results">
+                    </div>
+                </div>
 
+
+
+                <div class="container">
+                    <h1>Quantidade de Livros Cadastrados por Categoria</h1>
+                    <div id="feed_container1" class="div-results" class="feed-container"
+                        style="background-color: #2b668d; margin: 10px;">
+                        <br>
+                        <b style="margin: 10px;"> 1º Autor Premiado:</b>
+                        <br>
+                        <b style="margin: 10px;"> Livro:</b>
+                        <br>
+                        <br>
+                    </div>
+                    <div id="feed_container2" class="div-results" class="feed-container"
+                        style="background-color: #375f79; margin: 10px;">
+                        <br>
+                        <b style="margin: 10px;"> 2º Autor Premiado:</b>
+                        <br>
+                        <b style="margin: 10px;"> Livro:</b>
+                        <br>
+                        <br>
+                    </div>
+
+                    <div id="feed_container3" class="div-results" class="feed-container"
+                        style="background-color: #143c57; margin: 10px;">
+                        <br>
+                        <b style="margin: 10px;"> 3º Autor Premiado:</b>
+                        <br>
+                        <b style="margin: 10px;"> Livro:</b>
+                        <br>
+                        <br>
+                    </div>
+
+                    <div class="feed-container" class="div-results" style="background-color: #143c57; margin: 10px;">
+                        <div class="graph" style="position: relative; height:40vh; width:80vw; margin: auto;">
+                            <canvas id="graficoLivros"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
+
+    <footer>
+        <div class="footer">
+            <!-- link: https://t3.ftcdn.net/jpg/09/03/98/56/360_F_903985637_hYTyUJGw6H8RJjtJEwbqEraMQxLWCFv7.jpg -->
+        </div>
+    </footer>
 
 
 </body>
@@ -96,40 +142,40 @@
 </html>
 
 <script>
-    
 
-    let proximaAtualizacao;
 
-    window.onload = exibirAquariosDoUsuario();
+    // let proximaAtualizacao;
 
-    function exibirAquariosDoUsuario() {
-        var aquarios = JSON.parse(sessionStorage.AQUARIOS);
-        aquarios.forEach(item => {
-            document.getElementById("btnAquario").innerHTML += `
-            <button class="btn-chart" onclick="exibirAquario(${item.id})" id="btnAquario${item.id}">${item.descricao}</button>
-            `
+    // window.onload = exibirAquariosDoUsuario();
 
-            document.getElementById("graficos").innerHTML += `
-                <div id="grafico${item.id}" class="display-none">
-                    <h3 class="tituloGraficos">
-                        <span id="tituloAquario${item.id}">${item.descricao}</span>
-                    </h3>
-                    <div class="graph">
-                        <canvas id="myChartCanvas${item.id}"></canvas>
-                    </div>
-                    <div class="label-captura">
-                        <p id="avisoCaptura${item.id}"></p>
-                    </div>
-                </div>
-            `
+    // function exibirAquariosDoUsuario() {
+    //     var aquarios = JSON.parse(sessionStorage.AQUARIOS);
+    //     aquarios.forEach(item => {
+    //         document.getElementById("btnAquario").innerHTML += `
+    //         <button class="btn-chart" onclick="exibirAquario(${item.id})" id="btnAquario${item.id}">${item.descricao}</button>
+    //         `
 
-            obterDadosGrafico(item.id)
-        });
+    //         document.getElementById("graficos").innerHTML += `
+    //             <div id="grafico${item.id}" class="display-none">
+    //                 <h3 class="tituloGraficos">
+    //                     <span id="tituloAquario${item.id}">${item.descricao}</span>
+    //                 </h3>
+    //                 <div class="graph">
+    //                     <canvas id="myChartCanvas${item.id}"></canvas>
+    //                 </div>
+    //                 <div class="label-captura">
+    //                     <p id="avisoCaptura${item.id}"></p>
+    //                 </div>
+    //             </div>
+    //         `
 
-        if (aquarios.length > 0) {
-            exibirAquario(aquarios[0].id)
-        }
-    }
+    //         obterDadosGrafico(item.id)
+    //     });
+
+    //     if (aquarios.length > 0) {
+    //         exibirAquario(aquarios[0].id)
+    //     }
+    // }
 
     function alterarTitulo(idAquario) {
         var tituloAquario = document.getElementById(`tituloAquario${idAquario}`)
@@ -168,6 +214,28 @@
         btnExibir.classList.remove("btn-white")
         btnExibir.classList.add("btn-pink")
     }
+
+
+    // function autores() {
+    //     var autorpremiado = [];
+    //     var autor = "";
+    //     var margem = 0;
+
+    //     if (precoCompra > 150) {
+    //         autorpremiado.push(autor);
+
+    //     } else if (precoCompra > 100 && precoCompra <= 100) {
+
+    //         autorpremiado.push(autor);
+
+    //     } else if (precoCompra > 50 && precoCompra <= 100) {
+
+    //         autorpremiado.push(autor);
+    //     }
+
+    // }
+
+
 
     // O gráfico é construído com três funções:
     // 1. obterDadosGrafico -> Traz dados do Banco de Dados para montar o gráfico da primeira vez
@@ -328,4 +396,108 @@
             });
 
     }
+
+    //MINNHA PARTE 
+
+    obterDadosGrafico()
+
+    function obterDadosGrafico() {
+        fetch("/livros/listar", { cache: 'no-store' }).then(function (response) {
+            if (response.ok) {
+                response.json().then(function (resposta) {
+                    console.log(`Dados recebidos para o Painel: ${JSON.stringify(resposta)}`);
+
+                    processarDadosEPlotar(resposta);
+                });
+            } else {
+                console.error('Nenhum dado encontrado ou erro na API');
+            }
+        })
+            .catch(function (error) {
+                console.error(`Erro na obtenção dos dados p/ o gráfico: ${error.message}`);
+            });
+    }
+
+    function processarDadosEPlotar(listaLivros) {
+
+        var generosMap = {};
+
+        for (var i = 0; i < listaLivros.length; i++) {
+            var livro = listaLivros[i];
+            var nomeGenero = livro.nomeGenero || "Não Identificado";
+            var estoqueLivro = Number(livro.Estoque) || Number(livro.Estoque) || 0;
+
+            if (generosMap[nomeGenero] === undefined) {
+                generosMap[nomeGenero] = estoqueLivro;
+            } else {
+                generosMap[nomeGenero] += estoqueLivro;
+            }
+        }
+
+
+        var listaLabels = Object.keys(generosMap);
+        var listaValores = Object.values(generosMap);
+
+        plotarGrafico(listaLabels, listaValores);
+    }
+
+    function plotarGrafico(labelsGeneros, dadosEstoque) {
+        console.log('Iniciando plotagem do gráfico de acervo...');
+
+        var dadosConfigurados = {
+            labels: labelsGeneros,
+            datasets: [{
+                label: 'Livros em Estoque por Gênero',
+                data: dadosEstoque,
+                backgroundColor: [
+                    'rgb(104, 137, 190)',
+                    'rgb(49, 108, 196)',
+                    'rgb(27, 43, 68)',
+                    'rgb(23, 58, 110)',
+                    'rgb(92, 100, 112)',
+                    'rgb(39, 51, 70)'
+
+                ],
+                borderColor: [
+                    'rgb(104, 137, 190)',
+                    'rgb(49, 108, 196)',
+                    'rgb(27, 43, 68)',
+                    'rgb(23, 58, 110)',
+                    'rgb(92, 100, 112)',
+                    'rgb(39, 51, 70)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const config = {
+            type: 'bar',
+            data: dadosConfigurados,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        };
+
+
+        let meuGrafico = new Chart(
+            graficoLivros,
+            config
+        );
+
+        // let myChart = new Chart(
+        //     document.getElementById(`myChartCanvas${idAquario}`),
+        //     config
+        // );
+
+    }
+
+
+
+
 </script>

@@ -8,6 +8,7 @@ livro.id,
 livro.titulo,
 livro.precoCompra,
 livro.precoVenda,
+livro.Estoque,
 autor.nome as nomeAutor,
 genero.nome as nomeGenero
  from livro join autor on autor.id = livro.fkAutor join genero on genero.id = livro.fkGenero;
@@ -18,21 +19,23 @@ genero.nome as nomeGenero
 
 
 
-function cadastrar(titulo, fkAutor, fkGenero, precoCompra, precoVenda) {
+function cadastrar(titulo, fkAutor, fkGenero, precoCompra, precoVenda, Estoque) {
 
     var instrucaoSql = `
-        INSERT INTO livro (titulo, fkAutor, fkGenero, precoCompra, precoVenda) VALUES ('${titulo}', '${fkAutor}', '${fkGenero}', '${precoCompra}', '${precoVenda}');
+        INSERT INTO livro (titulo, fkAutor, fkGenero, precoCompra, precoVenda, Estoque) VALUES 
+        ('${titulo}', '${fkAutor}', '${fkGenero}', '${precoCompra}', '${precoVenda}', '${Estoque}');
     `;
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
 
-function editar(novoPrecoCompra, novoPrecoVenda, id) {
+function editar(novoEstoque,novoPrecoCompra, novoPrecoVenda, id) {
 
     var instrucaoSql = `
         UPDATE livro 
-        SET precoCompra = '${novoPrecoCompra}', 
-            precoVenda = '${novoPrecoVenda}'
+        SET Estoque = '${novoEStoque}', 
+            precoCompra = '${novoPrecoCompra}', 
+            precoVenda = '${novoPrecoVenda}',
         WHERE id = ${id};
     `;
     console.log("Executando a instrução SQL: \n" + instrucaoSql);

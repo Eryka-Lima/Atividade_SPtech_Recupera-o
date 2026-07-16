@@ -69,6 +69,7 @@ body {
   color: #fff;
   display: flex;
   font-size: 15px;
+  background-image: url('https://t3.ftcdn.net/jpg/09/03/98/56/360_F_903985637_hYTyUJGw6H8RJjtJEwbqEraMQxLWCFv7.jpg');
 }
 
 .footer .container {
@@ -118,7 +119,8 @@ body {
   margin-bottom: 10px;
 }
 
-#fkAutor_lista, #fkGenero_lista  {
+#fkAutor_lista,
+#fkGenero_lista {
   width: 98%;
   border: 2px solid #32b9cd;
   border-radius: 5px;
